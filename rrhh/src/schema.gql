@@ -2,6 +2,21 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Personal {
+  id: Int!
+  dni: String!
+  nombre: String!
+  apellidoPaterno: String!
+  apellidoMaterno: String!
+  genero: String!
+  fechaNacimiento: String
+  direccion: String!
+  telefono: String!
+  estadoLaboral: String!
+  usuarioId: String!
+  usuario: User
+}
+
 type User {
   id: String!
   username: String!
@@ -14,12 +29,20 @@ type AuthResponse {
 }
 
 type Query {
-  hello: String!
+  users: [User!]!
+  userById(id: String!): User
+  userByEmail(email: String!): User
+  userByUsername(username: String!): User
+  personals: [Personal!]!
+  personal(id: Int!): Personal!
 }
 
 type Mutation {
   register(data: CreateUserInput!): AuthResponse!
   login(data: LoginInput!): AuthResponse!
+  createPersonal(data: CreatePersonalDto!): Personal!
+  updatePersonal(data: UpdatePersonalDto!): Personal!
+  removePersonal(id: Int!): Personal!
 }
 
 input CreateUserInput {
@@ -31,4 +54,29 @@ input CreateUserInput {
 input LoginInput {
   email: String!
   password: String!
+}
+
+input CreatePersonalDto {
+  dni: String!
+  nombre: String!
+  apellidoPaterno: String!
+  apellidoMaterno: String!
+  genero: String!
+  fechaNacimiento: String!
+  direccion: String!
+  telefono: String!
+  estadoLaboral: String!
+}
+
+input UpdatePersonalDto {
+  dni: String
+  nombre: String
+  apellidoPaterno: String
+  apellidoMaterno: String
+  genero: String
+  fechaNacimiento: String
+  direccion: String
+  telefono: String
+  estadoLaboral: String
+  id: Int!
 }

@@ -13,7 +13,7 @@ export class AuthService {
 
   async register(data: CreateUserInput): Promise<AuthResponse> {
     const user = await this.usersService.create(data);
-    const token = this.generateToken(user.id, user.email);
+    const token = this.generateToken(user.id, user.email,user.username );
 
     return {
       accessToken: token,
@@ -25,7 +25,7 @@ export class AuthService {
     const user = await this.usersService.validateUser(email, password);
     if (!user) throw new UnauthorizedException('Invalid credentials');
 
-    const token = this.generateToken(user.id, user.email);
+    const token = this.generateToken(user.id, user.email,user.username);
 
     return {
       accessToken: token,
@@ -33,8 +33,12 @@ export class AuthService {
     };
   }
 
-  private generateToken(userId: string, email: string): string {
-    return this.jwtService.sign({ sub: userId, email });
+  private generateToken(userId: string, email: string , username:string): string {
+    return this.jwtService.sign({
+       sub: userId,
+       id:userId,
+            email ,
+            username});
   }
 }
 

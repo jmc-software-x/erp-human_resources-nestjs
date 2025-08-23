@@ -1,10 +1,11 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Personal } from '@personal/entities/personal.entity';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 @ObjectType()
 @Entity()
 export class User {
-  @Field()
+  @Field(()=> String)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -18,4 +19,9 @@ export class User {
 
   @Column()
   password: string;
+
+ @OneToMany(() => Personal, (personal) => personal.usuario)
+  personales: Personal[];
+
+
 }
