@@ -24,14 +24,16 @@ export class PersonalService {
     return personal;
   }
 
-  async create(data: CreatePersonalDto, userId: string): Promise<Personal> {
-    const personal = this.personalRepo.create({
-      ...data,
-      usuarioId: userId,
-    });
-    const saved = await this.personalRepo.save(personal);
-    return this.findOne(saved.id);
-  }
+async create(data: CreatePersonalDto, userId: string): Promise<Personal> {
+  const personal = this.personalRepo.create({
+    ...data,
+    usuarioId: userId, 
+  });
+
+  const saved = await this.personalRepo.save(personal);
+  return this.findOne(saved.id);
+}
+
 
   async update(dto: UpdatePersonalDto): Promise<Personal> {
     await this.personalRepo.update(dto.id, dto);
@@ -44,4 +46,34 @@ async remove(id: number): Promise<Personal> {
   return personal;
 }
 
+async disable(id: number): Promise<Personal> {
+  const personal = await this.personalRepo.findOne({ where: { id } });
+
+  if (!personal) {
+    throw new NotFoundException(`Personal con id ${id} no encontrado`);
+  }
+
+  personal.status = 0;
+  return this.personalRepo.save(personal);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
+
+
+
+
+

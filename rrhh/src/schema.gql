@@ -15,6 +15,7 @@ type Personal {
   estadoLaboral: String!
   usuarioId: String!
   usuario: User
+  status: Int!
 }
 
 type User {
@@ -61,11 +62,25 @@ input CreatePersonalDto {
   nombre: String!
   apellidoPaterno: String!
   apellidoMaterno: String!
-  genero: String!
+  genero: Genero!
   fechaNacimiento: String!
   direccion: String!
   telefono: String!
-  estadoLaboral: String!
+  estadoLaboral: EstadoLaboral!
+}
+
+"""Genero del personal"""
+enum Genero {
+  F
+  M
+  X
+}
+
+"""Estado laboral de la persona (A = Activo, I = Inactivo)"""
+enum EstadoLaboral {
+  A
+  I
+  X
 }
 
 input UpdatePersonalDto {
@@ -73,10 +88,11 @@ input UpdatePersonalDto {
   nombre: String
   apellidoPaterno: String
   apellidoMaterno: String
-  genero: String
+  genero: Genero
   fechaNacimiento: String
   direccion: String
   telefono: String
-  estadoLaboral: String
+  estadoLaboral: EstadoLaboral
   id: Int!
+  usuarioId: String
 }
