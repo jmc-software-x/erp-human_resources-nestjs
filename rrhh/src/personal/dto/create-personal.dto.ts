@@ -1,7 +1,16 @@
-import { InputType, Field } from '@nestjs/graphql';
+import { InputType, Field, Int } from '@nestjs/graphql';
 import { EstadoLaboral } from '@personal/enums/estado-laboral.enum';
 import { Genero } from '@personal/enums/genero.enum';
-import { IsDateString, IsIn, IsNotEmpty, IsString, Length, IsUUID } from 'class-validator';
+import {
+  IsDateString,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Length,
+  IsUUID,
+  IsInt,
+} from 'class-validator';
 
 @InputType()
 export class CreatePersonalDto {
@@ -25,11 +34,14 @@ export class CreatePersonalDto {
   @Length(1, 45)
   apellidoMaterno: string;
 
- @Field(() => Genero)
+  @Field(() => Genero)
+  @IsEnum(Genero)
   genero: Genero;
-  
- @Field(() => String)
-  fechaNacimiento: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsDateString()
+  fechaNacimiento?: string;
 
   @Field()
   @IsString()
@@ -42,6 +54,15 @@ export class CreatePersonalDto {
   telefono: string;
 
   @Field(() => EstadoLaboral)
+  @IsEnum(EstadoLaboral)
   estadoLaboral: EstadoLaboral;
 
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  status?: number;
+
+  @Field(() => String)
+  @IsUUID()
+  usuarioId: string;
 }

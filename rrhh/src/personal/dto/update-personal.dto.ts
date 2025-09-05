@@ -3,9 +3,9 @@ import { CreatePersonalDto } from './create-personal.dto';
 
 @InputType()
 export class UpdatePersonalDto extends PartialType(CreatePersonalDto) {
-  @Field(() => Int)
-  id: number;
-
   @Field(() => String, { nullable: true })
-  usuarioId?: string;  
+  usuarioId?: string;
+
+  @Field(() => Number, { nullable: true })
+  status?: number;
 }

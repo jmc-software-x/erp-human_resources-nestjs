@@ -16,7 +16,7 @@ export class PersonalService {
     return this.personalRepo.find({ relations: ['usuario'] });
   }
 
-  async findOne(id: number): Promise<Personal> {
+  async findOne(id: string): Promise<Personal> {
     const personal = await this.personalRepo.findOne({ where: { id }, relations: ['usuario'] });
     if (!personal) {
       throw new NotFoundException(`Personal con id ${id} no encontrado`);
@@ -24,55 +24,49 @@ export class PersonalService {
     return personal;
   }
 
-async create(data: CreatePersonalDto, userId: string): Promise<Personal> {
-  const personal = this.personalRepo.create({
-    ...data,
-    usuarioId: userId, 
+
+async findByDni(dni: string): Promise<Personal | null> {
+  return this.personalRepo.findOne({
+    where: { dni },
+    relations: ['contrato'],
   });
-
-  const saved = await this.personalRepo.save(personal);
-  return this.findOne(saved.id);
 }
 
+  async create(data: CreatePersonalDto, userId: string): Promise<Personal> {
+    const personal = this.personalRepo.create({
+      ...data,
+      usuarioId: userId, 
+    });
 
-  async update(dto: UpdatePersonalDto): Promise<Personal> {
-    await this.personalRepo.update(dto.id, dto);
-    return this.findOne(dto.id);
+    const saved = await this.personalRepo.save(personal);
+    return this.findOne(saved.id);
   }
 
-async remove(id: number): Promise<Personal> {
-  const personal = await this.findOne(id);
-  await this.personalRepo.remove(personal);
-  return personal;
-}
+  async update(id: string, dto: UpdatePersonalDto): Promise<Personal> {
+    const personal = await this.personalRepo.preload({
+      id,
+      ...dto,
+    });
 
-async disable(id: number): Promise<Personal> {
-  const personal = await this.personalRepo.findOne({ where: { id } });
+    if (!personal) {
+      throw new NotFoundException(`Personal con id ${id} no encontrado`);
+    }
 
-  if (!personal) {
-    throw new NotFoundException(`Personal con id ${id} no encontrado`);
+    return this.personalRepo.save(personal);
   }
 
-  personal.status = 0;
-  return this.personalRepo.save(personal);
+  async remove(id: string): Promise<Personal> {
+    const personal = await this.findOne(id);
+    await this.personalRepo.remove(personal);
+    return personal;
+  }
+
+  async disable(id: string): Promise<Personal> {
+    const personal = await this.findOne(id);
+    personal.status = 0;
+    return this.personalRepo.save(personal);
+  }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}
-
 
 
 

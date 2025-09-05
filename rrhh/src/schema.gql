@@ -2,8 +2,65 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Personal {
+type Cargo {
   id: Int!
+  nombre: String!
+  estado: EstadoCargo!
+  area: Area
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""Estado del Cargo (A = Activo, I = Inactivo, S = Suspendido)"""
+enum EstadoCargo {
+  INACTIVO
+  ACTIVO
+  SUSPENDIDO
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Area {
+  idarea: ID!
+  ARE_nombre: String!
+  ARE_estado: EstadoArea!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  contratos: [Contrato!]
+  cargos: [Cargo!]
+}
+
+"""Estado del área (A = Activo, I = Inactivo)"""
+enum EstadoArea {
+  I
+  A
+}
+
+type Contrato {
+  id: String!
+  fechaInicio: DateTime!
+  fechaSalida: DateTime!
+  estado: EstadoContrato!
+  personalId: String!
+  personal: Personal!
+  area: Area!
+}
+
+"""
+Estado Contrato de la persona (A = Activo, I = Inactivo, P =    Pendiente)
+"""
+enum EstadoContrato {
+  I
+  A
+  P
+}
+
+type Personal {
+  id: String!
+  usuarioId: String!
   dni: String!
   nombre: String!
   apellidoPaterno: String!
@@ -13,9 +70,10 @@ type Personal {
   direccion: String!
   telefono: String!
   estadoLaboral: String!
-  usuarioId: String!
-  usuario: User
   status: Int!
+  usuario: User
+  contrato: [Contrato!]
+  nombreCompleto: String!
 }
 
 type User {
@@ -34,16 +92,37 @@ type Query {
   userById(id: String!): User
   userByEmail(email: String!): User
   userByUsername(username: String!): User
+  me: User!
   personals: [Personal!]!
-  personal(id: Int!): Personal!
+  personal(id: String!): Personal!
+  PersonalPorDni(dni: String!): Personal
+  contratos: [Contrato!]!
+  contrato(id: String!): Contrato!
+  areas: [Area!]!
+  area(id: Int!): Area!
+  findAllCargos: [Cargo!]!
+  findOneCargo(id: Int!): Cargo!
 }
 
 type Mutation {
   register(data: CreateUserInput!): AuthResponse!
   login(data: LoginInput!): AuthResponse!
   createPersonal(data: CreatePersonalDto!): Personal!
-  updatePersonal(data: UpdatePersonalDto!): Personal!
-  removePersonal(id: Int!): Personal!
+  updatePersonal(id: String!, data: UpdatePersonalDto!): Personal!
+  removePersonal(id: String!): Personal!
+  disablePersonal(id: String!): Personal!
+  createContrato(createContratoInput: CreateContratoInput!): Contrato!
+  updateContrato(id: String!, updateContratoInput: UpdateContratoInput!): Contrato!
+  disableContrato(id: String!): Contrato!
+  createArea(createAreaInput: CreateAreaInput!): Area!
+  updateArea(updateAreaInput: UpdateAreaInput!): Area!
+  removeArea(id: Int!): Area!
+  activateArea(id: Int!): Area!
+  deactivateArea(id: Int!): Area!
+  createCargo(data: CreateCargoInput!): Cargo!
+  updateCargo(id: Int!, data: UpdateCargoInput!): Cargo!
+  removeCargo(id: Int!): Cargo!
+  disableCargo(id: Int!): Cargo!
 }
 
 input CreateUserInput {
@@ -63,10 +142,12 @@ input CreatePersonalDto {
   apellidoPaterno: String!
   apellidoMaterno: String!
   genero: Genero!
-  fechaNacimiento: String!
+  fechaNacimiento: String
   direccion: String!
   telefono: String!
   estadoLaboral: EstadoLaboral!
+  status: Int
+  usuarioId: String!
 }
 
 """Genero del personal"""
@@ -78,8 +159,8 @@ enum Genero {
 
 """Estado laboral de la persona (A = Activo, I = Inactivo)"""
 enum EstadoLaboral {
-  A
   I
+  A
   X
 }
 
@@ -93,6 +174,45 @@ input UpdatePersonalDto {
   direccion: String
   telefono: String
   estadoLaboral: EstadoLaboral
-  id: Int!
+  status: Float
   usuarioId: String
+}
+
+input CreateContratoInput {
+  fechaInicio: DateTime!
+  fechaSalida: DateTime!
+  estado: EstadoContrato
+  personalId: String!
+}
+
+input UpdateContratoInput {
+  fechaInicio: DateTime
+  fechaSalida: DateTime
+  estado: EstadoContrato
+  personalId: String
+  estadoc: EstadoContrato
+}
+
+input CreateAreaInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateAreaInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  idarea: Int!
+  ARE_estado: EstadoArea
+}
+
+input CreateCargoInput {
+  nombre: String!
+  estado: EstadoCargo
+  areaId: String
+}
+
+input UpdateCargoInput {
+  nombre: String
+  estado: EstadoCargo
+  areaId: String
 }

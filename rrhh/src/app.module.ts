@@ -11,11 +11,15 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { PersonalModule } from './personal/personal.module';
+import { UserPhotosModule } from './users/user-photos/user-photos.module';
+import { ContratoModule } from './contrato/contrato.module';
+import { AreaModule } from './area/area.module';
+import { CargoModule } from './cargo/cargo.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true, // disponible en toda la app
+      isGlobal: true, 
     }),
 
     GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -45,6 +49,10 @@ import { PersonalModule } from './personal/personal.module';
     UsersModule,
     AuthModule,
     PersonalModule,
+    UserPhotosModule,
+    ContratoModule,
+    AreaModule,
+    CargoModule,
   ],
   controllers: [AppController],
   providers: [AppService],

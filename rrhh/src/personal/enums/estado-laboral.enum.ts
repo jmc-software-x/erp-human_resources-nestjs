@@ -1,9 +1,9 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 export enum EstadoLaboral {
-  A = 'A',
-  I = 'I',
-  X = 'X',
+  I = 0,
+  A = 1,
+  X = 2,
 }
 
 registerEnumType(EstadoLaboral, {

@@ -4,7 +4,7 @@ import { PersonalService } from './personal.service';
 import { Personal } from './entities/personal.entity';
 import { CreatePersonalDto } from './dto/create-personal.dto';
 import { UpdatePersonalDto } from './dto/update-personal.dto';
-import { GqlAuthGuard } from 'auth/guards/gql-auth.guard.';
+import { GqlAuthGuard } from 'auth/guards/gql-auth.guard';
 import { CurrentUser } from 'auth/guards/current-user.decorator';
 import { User } from '@users/entities/user.entity';
 
@@ -18,28 +18,41 @@ export class PersonalResolver {
   }
 
   @Query(() => Personal)
-  personal(@Args('id', { type: () => Int }) id: number) {
+  personal(@Args('id', { type: () => String }) id: string) {
     return this.personalService.findOne(id);
   }
 
-
-@Mutation(() => Personal)
-@UseGuards(GqlAuthGuard)
-createPersonal(
-  @Args('data') data: CreatePersonalDto,
-  @CurrentUser() user: User,
-) {
-  return this.personalService.create(data, user.id);
-}
-
-
-  @Mutation(() => Personal)
-  updatePersonal(@Args('data') data: UpdatePersonalDto) {
-    return this.personalService.update(data);
+  @Query(() => Personal, { nullable: true })
+  PersonalPorDni(
+    @Args('dni', { type: () => String }) dni: string,
+  ) {
+    return this.personalService.findByDni(dni);
   }
 
-@Mutation(() => Personal)
-async removePersonal(@Args('id', { type: () => Int }) id: number) {
-  return this.personalService.remove(id);
-}
+  @Mutation(() => Personal)
+  @UseGuards(GqlAuthGuard)
+  createPersonal(
+    @Args('data') data: CreatePersonalDto,
+    @CurrentUser() user: User,
+  ) {
+    return this.personalService.create(data, user.id);
+  }
+
+  @Mutation(() => Personal)
+  updatePersonal(
+    @Args('id', { type: () => String }) id: string,
+    @Args('data') data: UpdatePersonalDto,
+  ) {
+    return this.personalService.update(id, data);
+  }
+
+  @Mutation(() => Personal)
+  removePersonal(@Args('id', { type: () => String }) id: string) {
+    return this.personalService.remove(id);
+  }
+
+  @Mutation(() => Personal)
+  disablePersonal(@Args('id', { type: () => String }) id: string) {
+    return this.personalService.disable(id);
+  }
 }
